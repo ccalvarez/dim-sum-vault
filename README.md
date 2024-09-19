@@ -10,4 +10,7 @@ Breve explicación de las decisiones técnicas y de diseño tomadas durante el d
 
 ### Integrantes del equipo
 
-Incluyan los perfiles de GitHub de los miembros del equipo.
+[@ccalvarez](https://github.com/ccalvarez) - Carolina Cordero\
+[@fedejim](https://github.com/fedejim) - Federico Jiménez\
+[@andres](https://github.com/andres-actualizar) - Andrés \
+[@cañas](https://github.com/cañas-actualizar) - Cañas
