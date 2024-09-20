@@ -19,5 +19,5 @@ Se crea una estructura para calcular las ganancias segun el tiempo que el usuari
 
 [@ccalvarez](https://github.com/ccalvarez) - Carolina Cordero\
 [@fedejim](https://github.com/fedejim) - Federico Jiménez\
-[@orue1](https://github.com/aorue1) - Andrés Orué Moraga \
+[@aorue1](https://github.com/aorue1) - Andrés Orué Moraga \
 [@cañas](https://github.com/cañas-actualizar) - Cañas
