@@ -6,7 +6,7 @@
 > \
 > [al final removemos este enunciado]
 
-Se decidio implementar una bóveda siguiendo el estándar ERC4626 de OpenZeppelin, en la cual los usuarios depositan token ERC20 y reciben a cambio otros tokens que pueden ser redimidos y dependiendo del tiempo generan algún valor o ganancia al usuario.
+Se decidió implementar una bóveda siguiendo el estándar ERC-4626 de OpenZeppelin, en la cual los usuarios depositan token ERC-20 _(assets)_, y reciben a cambio otros tokens _(shares)_ que pueden ser redimidos y dependiendo del tiempo generan algún valor o ganancia al usuario.
 
 El usuario recibe un interés según el tiempo que invierte sus tokens, se penaliza la salida anticipada del contrado por medio de un fee.
 
