@@ -2,8 +2,7 @@
 
 ## Descripción del contrato
 
-> Explicación del contrato desarrollado, incluyendo la funcionalidad principal.\
-> \
+> Explicación del contrato desarrollado, incluyendo la funcionalidad principal.
 > [al final removemos este enunciado]
 
 Se decidió implementar una bóveda siguiendo el estándar ERC-4626 de OpenZeppelin, en la cual los usuarios depositan token ERC-20 _(assets)_, y reciben a cambio otros tokens _(shares)_ que pueden ser redimidos y dependiendo del tiempo generan algún valor o ganancia al usuario.
@@ -14,8 +13,7 @@ Se crea una estructura para calcular las ganancias segun el tiempo que el usuari
 
 ## Razonamiento detrás del diseño
 
-> Breve explicación de las decisiones técnicas y de diseño tomadas durante el desarrollo, haciendo énfasis en el uso de patrones de diseño en Solidity donde sea necesario.\
-> \
+> Breve explicación de las decisiones técnicas y de diseño tomadas durante el desarrollo, haciendo énfasis en el uso de patrones de diseño en Solidity donde sea necesario.
 > [al final removemos este enunciado]
 
 ### Decisiones técnicas
