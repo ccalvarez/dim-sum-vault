@@ -24,17 +24,11 @@ Se crea una estructura para calcular las ganancias segun el tiempo que el usuari
 
 ### Patrones de diseño utilizados
 
-#### Ownable
+- **Ownable:** [Explicación, en qué consiste y por qué lo usamos]
 
-[Explicación, en qué consiste y por qué lo usamos]
+- **Pausable:** el contrato puede ser pausable si hay alguna emergencia, pero sólo el dueño puede realizar esta función de pausar y reanudar el contrato, siguiendo los patrones de Ownable y Paused.
 
-#### Pausable
-
-El contrato puede ser pausable si hay alguna emergencia, pero sólo el dueño puede realizar esta función de pausar y reanudar el contrato, siguiendo los patrones de Ownable y Paused.
-
-#### Reentrancy Guard
-
-[Explicación, en qué consiste y por qué lo usamos]
+- **Reentrancy Guard:** [Explicación, en qué consiste y por qué lo usamos]
 
 ## Integrantes del equipo
 
