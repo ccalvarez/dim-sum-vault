@@ -1425,11 +1425,11 @@
 			]
 		},
 		"contracts/DimSumVault.sol": {
-			"keccak256": "0x19d52ab331efc2b30a43ae47f157f9a158f82b5592665da5b1bb43ac98c3148c",
+			"keccak256": "0xfad61b8a160d2da9104ca21182f12acaf96dfaff13b9601201dc2867c67c7d64",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e7e99ca7352f72a6d09c28eed118aba21bc52b64e02b077d02ecb311b451507e",
-				"dweb:/ipfs/QmUyKUiMkCTVGyQC7mAoZFQbUg7zyTp9xByHFkgyLsJWqn"
+				"bzz-raw://8b38946ea6d642d5c35cf3ce80c83fbb288409a25214dbf52660148f566b9f94",
+				"dweb:/ipfs/QmUFDnATdQLe65iEwBKVeJBmQJoJYa92WdvUjEgxXBPNK5"
 			]
 		}
 	},

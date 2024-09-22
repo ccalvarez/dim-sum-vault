@@ -70,9 +70,11 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
                                  IMMUTABLES
     //////////////////////////////////////////////////////////////*/
 
-      constructor(ERC20 asset)
+      constructor(ERC20 asset) 
       ERC20("Wo Tip,", "WTP") 
-      ERC4626(asset) {}
+      ERC4626(asset) {
+        owner = msg.sender;
+      }
     
 
     /*//////////////////////////////////////////////////////////////
