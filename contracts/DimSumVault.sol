@@ -125,7 +125,7 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
         rewardPool += (totalFees / 2);
         shareHolder[vaultOwner] -= vaultAssets;
         shares = super.withdraw(vaultAssets - fee - penalty, vaultReceiver, vaultOwner);
-        return shares;
+        return shares; // cantidad de shares que fueron quemados
 
     }
 
