@@ -8,8 +8,8 @@
 			{
 				"inputs": [
 					{
-						"internalType": "contract IERC20",
-						"name": "_asset",
+						"internalType": "contract ERC20",
+						"name": "asset",
 						"type": "address"
 					}
 				],
@@ -289,6 +289,38 @@
 				"anonymous": false,
 				"inputs": [
 					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "EarningsDistributed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "FeesCollected",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [],
+				"name": "Paused",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
 						"indexed": true,
 						"internalType": "address",
 						"name": "from",
@@ -308,6 +340,12 @@
 					}
 				],
 				"name": "Transfer",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [],
+				"name": "Unpaused",
 				"type": "event"
 			},
 			{
@@ -346,6 +384,19 @@
 				],
 				"name": "Withdraw",
 				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "FEE_PERCENTAGE",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
 			},
 			{
 				"inputs": [
@@ -430,6 +481,25 @@
 			{
 				"inputs": [
 					{
+						"internalType": "address",
+						"name": "holder",
+						"type": "address"
+					}
+				],
+				"name": "calculateRewards",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "uint256",
 						"name": "shares",
 						"type": "uint256"
@@ -499,6 +569,13 @@
 						"type": "uint256"
 					}
 				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "distributeEarnings",
+				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
@@ -616,6 +693,13 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "pause",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "uint256",
@@ -722,6 +806,62 @@
 			},
 			{
 				"inputs": [],
+				"name": "rewardPool",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "shareHolder",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "vaultAssets",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "vaultReceiver",
+						"type": "address"
+					}
+				],
+				"name": "stake",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "shares",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "symbol",
 				"outputs": [
 					{
@@ -813,6 +953,13 @@
 				"type": "function"
 			},
 			{
+				"inputs": [],
+				"name": "unpause",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "uint256",
@@ -823,9 +970,14 @@
 						"internalType": "address",
 						"name": "vaultReceiver",
 						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "vaultOwner",
+						"type": "address"
 					}
 				],
-				"name": "vaultDeposit",
+				"name": "unstake",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -859,35 +1011,6 @@
 					{
 						"internalType": "uint256",
 						"name": "assets",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "uint256",
-						"name": "vaultAssets",
-						"type": "uint256"
-					},
-					{
-						"internalType": "address",
-						"name": "vaultReceiver",
-						"type": "address"
-					},
-					{
-						"internalType": "address",
-						"name": "vaultOwner",
-						"type": "address"
-					}
-				],
-				"name": "vaultWithdraw",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "shares",
 						"type": "uint256"
 					}
 				],
@@ -1150,6 +1273,14 @@
 				"dweb:/ipfs/QmcLLJppxKeJWqHxE2CUkcfhuRTgHSn8J4kijcLa5MYhSt"
 			]
 		},
+		"@openzeppelin/contracts/security/ReentrancyGuard.sol": {
+			"keccak256": "0xa535a5df777d44e945dd24aa43a11e44b024140fc340ad0dfe42acf4002aade1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://41319e7f621f2dc3733511332c4fd032f8e32ad2aa7fd6f665c19741d9941a34",
+				"dweb:/ipfs/QmcYR3bd862GD1Bc7jwrU9bGxrhUu5na1oP964bDCu2id1"
+			]
+		},
 		"@openzeppelin/contracts/token/ERC20/ERC20.sol": {
 			"keccak256": "0xc3e1fa9d1987f8d349dfb4d6fe93bf2ca014b52ba335cfac30bfe71e357e6f80",
 			"license": "MIT",
@@ -1223,11 +1354,11 @@
 			]
 		},
 		"contracts/DimSumVault.sol": {
-			"keccak256": "0xf9fc64b9f320bc5e17f2ff1ee1874163ea6b018986fee2910dd85200ca1e57f1",
+			"keccak256": "0x63d81bab0d4272b8601dcf210d2047dd3e102bec4026dc434a90199575080319",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c82a33f56660a3611050660bcdc4f074da90b711478e4689bb0febbb94acf6fd",
-				"dweb:/ipfs/Qmczg1R8WhbHubojxtHNv659KzLk1bKvBMZdGb5pjhwK3N"
+				"bzz-raw://5e1aaae1e78a8c6f50b131212b9390ca87237569342f2ab996865e36a497c89e",
+				"dweb:/ipfs/QmUSTbdydpmCfdcMybd8TNV5cygi62Kjk7SaSuAfURnPsd"
 			]
 		}
 	},
