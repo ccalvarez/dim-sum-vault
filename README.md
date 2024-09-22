@@ -11,6 +11,7 @@ Se decidió implementar una bóveda de tipo liquid staking, siguiendo el estánd
 - El usuario no puede realizar un retiro si su primer depópsito no ha cumplido con el equivalente a un ciclo.
 - El dueño del contrato ejecutará la funcion para calcular las ganancias periodicamente en ciclos de 7 días.
 
+El contrato Solidity creado se ubica dentro del folder [/contracts](https://github.com/ccalvarez/dim-sum-vault/tree/main/contracts) de este repositorio.
 
 ## Decisiones técnicas
 - Se crea la función calculateRewards para calcular las ganancias segun el tiempo que el usuario invierte sus tokens.
