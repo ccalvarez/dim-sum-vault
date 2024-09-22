@@ -112,15 +112,18 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
     function unstake(uint256 vaultAssets, address vaultReceiver, address vaultOwner) public whenNotPaused nonReentrant returns (uint256 shares) {
         require(vaultAssets > 0, "Assets must be greater than 0");
         require(vaultReceiver != address(0), "Receiver must not be address 0");
+        // El monto supera los fondos en su balance, o vaultOwner no existe en el mapping de holders (shareHolder[vaultOwner] retorna 0)
+        require(shareHolder[vaultOwner] > vaultAssets, "Insufficient funds/Transfer not allowed");
+
         uint256 fee = (vaultAssets * FEE_PERCENTAGE) / 100;
-        unit256 penalty = 0;
+        uint256 penalty = 0;
         //Revisa si el retiro sucede antes del MIN_STAKING_DURATION
         if (block.timestamp < depositTimestamps[vaultReceiver] + MIN_STAKING_DURATION){ // Revisa si el retiro sucede antes del MIN_STAKING_DURATION
             penalty = (vaultAssets * EARLY_WITHDRAWAL_PENALTY)/100;  // Si es así, se le agrega un penalty de 10% a los shares
         }
         totalFees += fee + penalty;
         rewardPool += (totalFees / 2);
-        shareHolder[vaultOwner] -= shares;
+        shareHolder[vaultOwner] -= vaultAssets;
         shares = super.withdraw(vaultAssets - fee - penalty, vaultReceiver, vaultOwner);
         return shares;
 

@@ -387,7 +387,33 @@
 			},
 			{
 				"inputs": [],
+				"name": "EARLY_WITHDRAWAL_PENALTY",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "FEE_PERCENTAGE",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "MIN_STAKING_DURATION",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -573,10 +599,55 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "depositTimestamps",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "distributeEarnings",
 				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getRewardPool",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getTotalFees",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -1354,11 +1425,11 @@
 			]
 		},
 		"contracts/DimSumVault.sol": {
-			"keccak256": "0x63d81bab0d4272b8601dcf210d2047dd3e102bec4026dc434a90199575080319",
+			"keccak256": "0x06ad59afa5a856e99ed592e8473a1eb94c018004cf7a8f7a3184943325134355",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5e1aaae1e78a8c6f50b131212b9390ca87237569342f2ab996865e36a497c89e",
-				"dweb:/ipfs/QmUSTbdydpmCfdcMybd8TNV5cygi62Kjk7SaSuAfURnPsd"
+				"bzz-raw://51d1a9d27f39481eb9bddfec05ba6a2e5044adb24f42fbe13a64d13bcf6e0823",
+				"dweb:/ipfs/Qmc9XFcTnkirLgCVX4kh7kAG6vs4rmA7dkf1aKvausrsef"
 			]
 		}
 	},
