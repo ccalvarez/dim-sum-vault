@@ -4,8 +4,9 @@ pragma solidity ^0.8.27;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC4626} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract DimSumVault is ERC4626 {
+contract DimSumVault is ERC4626, ReentrancyGuard {
 
 
      /*//////////////////////////////////////////////////////////////
@@ -96,7 +97,7 @@ contract DimSumVault is ERC4626 {
 
 
     // Deposit to the vault an ERC20 token
-    function stake(uint256 vaultAssets, address vaultReceiver) public whenNotPaused returns (uint256 shares) {
+    function stake(uint256 vaultAssets, address vaultReceiver) public whenNotPaused nonReentrant returns (uint256 shares) {
         require(vaultAssets > 0, "Assets must be greater than 0");
         shares = super.deposit(vaultAssets, vaultReceiver);
         shareHolder[vaultReceiver] += shares;
@@ -104,7 +105,7 @@ contract DimSumVault is ERC4626 {
     }
 
     // Withdraw from the vault the ERC20 tokens deposited
-    function unstake(uint256 vaultAssets, address vaultReceiver, address vaultOwner) public whenNotPaused returns (uint256 shares) {
+    function unstake(uint256 vaultAssets, address vaultReceiver, address vaultOwner) public whenNotPaused nonReentrant returns (uint256 shares) {
         require(vaultAssets > 0, "Assets must be greater than 0");
         require(vaultReceiver != address(0), "Receiver must not be address 0");
         uint256 fee = (vaultAssets * FEE_PERCENTAGE) / 100;
@@ -117,7 +118,7 @@ contract DimSumVault is ERC4626 {
     }
 
     // Withdraw from the vault earning winings from investing on this staking contract
-    function vaultRedeem(uint256 vaultShares, address vaultReceiver, address vaultOwner) public whenNotPaused returns (uint256 assets){
+    function vaultRedeem(uint256 vaultShares, address vaultReceiver, address vaultOwner) public whenNotPaused nonReentrant returns (uint256 assets){
         require(vaultShares > 0, "Assets must be greater than 0");
         require(vaultReceiver != address(0), "Receiver must not be address 0");
         shareHolder[vaultOwner] -= vaultShares;
@@ -126,7 +127,7 @@ contract DimSumVault is ERC4626 {
     }
 
 
-    function distributeEarnings() public onlyOwner {
+    function distributeEarnings() public onlyOwner nonReentrant {
         require(block.timestamp >= lastDistribution + CYCLE_DURATION, "El ciclo de staking no ha terminado");
         uint256 earnings = rewardPool;
         rewardPool = 0;
