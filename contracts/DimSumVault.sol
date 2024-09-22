@@ -74,6 +74,7 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
       ERC20("Wo Tip,", "WTP") 
       ERC4626(asset) {
         owner = msg.sender;
+        paused = false;
       }
     
 
