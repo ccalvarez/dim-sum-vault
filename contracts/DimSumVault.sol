@@ -18,10 +18,13 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
     bool private paused;
     uint256 public rewardPool; // El pool de recompensas a distribuir
     uint256 public constant FEE_PERCENTAGE = 10; // 10% comision de retiro
+    uint256 public constant EARLY_WITHDRAWAL_PENALTY = 10; // 10% penalty por retiro antes de ciclo
+    uint256 public constant MIN_STAKING_DURATION = CYCLE_DURATION; // Minimum staking duration to avoid penalty
     uint256 private totalFees;
     uint256 private lastDistribution; // Ultima distribucion de ganancias
     uint256 private constant CYCLE_DURATION = 7 days; // Duracion del ciclo de staking
-    mapping(address => uint256) public shareHolder; // a mapping that checks if a user has deposited a token
+    mapping(address => uint256) public shareHolder; // a mapping that checks if a user has deposited a token.
+    mapping(address => uint256) public depositTimestamps; // Mapping para guardar el timestamp de los depósitos.
 
 
 
@@ -101,6 +104,7 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
         require(vaultAssets > 0, "Assets must be greater than 0");
         shares = super.deposit(vaultAssets, vaultReceiver);
         shareHolder[vaultReceiver] += shares;
+        depositTimestamps[vaultReceiver] = block.timestamp; // Almacena el timestamp del depósito.
         return shares;
     }
 
@@ -109,22 +113,43 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
         require(vaultAssets > 0, "Assets must be greater than 0");
         require(vaultReceiver != address(0), "Receiver must not be address 0");
         uint256 fee = (vaultAssets * FEE_PERCENTAGE) / 100;
-        totalFees += fee;
-        rewardPool += totalFees / 2;
+        unit256 penalty = 0;
+        //Revisa si el retiro sucede antes del MIN_STAKING_DURATION
+        if (block.timestamp < depositTimestamps[vaultReceiver] + MIN_STAKING_DURATION){ // Revisa si el retiro sucede antes del MIN_STAKING_DURATION
+            penalty = (vaultAssets * EARLY_WITHDRAWAL_PENALTY)/100;  // Si es así, se le agrega un penalty de 10% a los shares
+        }
+        totalFees += fee + penalty;
+        rewardPool += (totalFees / 2);
         shareHolder[vaultOwner] -= shares;
-        shares = super.withdraw(vaultAssets - fee, vaultReceiver, vaultOwner);
+        shares = super.withdraw(vaultAssets - fee - penalty, vaultReceiver, vaultOwner);
         return shares;
 
     }
 
-    // Withdraw from the vault earning winings from investing on this staking contract
-    function vaultRedeem(uint256 vaultShares, address vaultReceiver, address vaultOwner) public whenNotPaused nonReentrant returns (uint256 assets){
-        require(vaultShares > 0, "Assets must be greater than 0");
+    function vaultRedeem(uint256 vaultShares, address vaultReceiver, address vaultOwner) public whenNotPaused returns (uint256 assets) {
+        require(vaultShares > 0, "VaultShares must be greater than 0");
         require(vaultReceiver != address(0), "Receiver must not be address 0");
-        shareHolder[vaultOwner] -= vaultShares;
-        assets = super.redeem(vaultShares, vaultReceiver, vaultOwner);
+        uint256 vaultAssets = convertToAssets(vaultShares); // Convierte shares a assets
+        
+        // Calcula el fee (10%)
+            uint256 fee = (vaultAssets * FEE_PERCENTAGE) / 100;
+        // Inicializa el penalty a un default de 0.
+            uint256 penalty = 0;
+        //Revisa si el retiro sucede antes del MIN_STAKING_DURATION
+        if (block.timestamp < depositTimestamps[vaultReceiver] + MIN_STAKING_DURATION) {// Revisa si el retiro sucede antes del MIN_STAKING_DURATION
+            penalty = (vaultAssets * EARLY_WITHDRAWAL_PENALTY)/100;  // Si es así, se le agrega un penalty de 10% a los shares
+        }
+        // Agrega el fee a totalFees y al rewardPool
+            totalFees += fee + penalty;
+            rewardPool += (totalFees / 2); // Add half of the total fees to the rewardPool
+        // Deducción del fee de los shares del owner y el total de la transacción de los vaultShares
+        shareHolder[vaultOwner] -= vaultShares; 
+        // Redime los shares.
+        assets = super.redeem(vaultShares, vaultReceiver, vaultOwner); 
+        assets = assets - fee - penalty;  // Deduce el fee de los assets
         return assets;
     }
+    
 
 
     function distributeEarnings() public onlyOwner nonReentrant {
@@ -161,6 +186,15 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
         return userRewards;
     } 
 
+    // Función para revisar el total de fees recoletados.
+    function getTotalFees() public view returns (uint256) {
+        return totalFees;
+    }
+
+    // Función para revisar el monto actual del reward pool.
+    function getRewardPool() public view returns (uint256) {
+        return rewardPool;
+    }
 
 
 }
