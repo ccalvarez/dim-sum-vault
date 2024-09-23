@@ -4,8 +4,7 @@ pragma solidity ^0.8.27;
 
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC4626} from "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
-import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 contract DimSumVault is ERC4626, ReentrancyGuard {
 
 
@@ -19,17 +18,19 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
     uint256 public rewardPool; // El pool de recompensas a distribuir
     uint256 public constant FEE_PERCENTAGE = 10; // 10% comision de retiro
     uint256 public constant EARLY_WITHDRAWAL_PENALTY = 10; // 10% penalty por retiro antes de ciclo
-    uint256 private constant CYCLE_DURATION = 7 days; // Duracion del ciclo de staking
+    uint256 public constant CYCLE_DURATION = 7 days; // Duracion del ciclo de staking
     uint256 private totalFees;
     uint256 private lastDistribution; // Ultima distribucion de ganancias
     
-    struct Deposit {
+    struct DepositLog {
         uint256 amount;
         uint256 timestamp;
     }
+
+    address[] private shareHoldersList;
     
     mapping(address => uint256) public shareHolder; // a mapping that checks if a user has deposited a token.
-    mapping(address => Deposit[]) public deposits; // Mapping para guardar el timestamp de los depósitos.
+    mapping(address => DepositLog[]) public deposits; // Mapping para guardar el timestamp de los depósitos.
 
 
 
@@ -112,9 +113,11 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
     function stake(uint256 vaultAssets, address vaultReceiver) public whenNotPaused nonReentrant returns (uint256 shares) {
         require(vaultAssets > 0, "Assets must be greater than 0");
         shares = super.deposit(vaultAssets, vaultReceiver);
-        deposits[vaultReceiver].push(Deposit(vaultAssets, block.timestamp));
+        deposits[vaultReceiver].push(DepositLog(vaultAssets, block.timestamp));
+        if (shareHolder[vaultReceiver] == 0) {
+            shareHoldersList.push(vaultReceiver); // Add to array if not already present
+        }
         shareHolder[vaultReceiver] += shares;
-        // depositTimestamps[vaultReceiver] = block.timestamp; // Almacena el timestamp del depósito.
         return shares;
     }
 
@@ -131,7 +134,7 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
         uint256 fee = (vaultAssets * FEE_PERCENTAGE) / 100;
         uint256 penalty = 0;
         if (deposits[vaultReceiver].length > 0 ){
-            Deposit memory firstDeposit = deposits[vaultReceiver][0];
+            DepositLog memory firstDeposit = deposits[vaultReceiver][0];
             if (block.timestamp < firstDeposit.timestamp + CYCLE_DURATION){ // Revisa si el retiro sucede antes del MIN_STAKING_DURATION
                 penalty = (vaultAssets * EARLY_WITHDRAWAL_PENALTY) / 100;  // Si es así, se le agrega un penalty de 10% a los shares
             }
@@ -146,7 +149,7 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
     }
     // Funcion para el reclamo de las recompensas del ciclo.
     function vaultRedeem(uint256 vaultShares, address vaultReceiver, address vaultOwner) public whenNotPaused returns (uint256 assets) {
-        Deposit memory firstDeposit = deposits[vaultReceiver][0];
+        DepositLog memory firstDeposit = deposits[vaultReceiver][0];
         require(vaultShares > 0, "VaultShares must be greater than 0");
         require(vaultReceiver != address(0), "Receiver must not be address 0");
         require(firstDeposit.timestamp + CYCLE_DURATION <= block.timestamp, "Deposit not met the time for rewards");
@@ -171,20 +174,22 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
     function distributeEarnings() public onlyOwner nonReentrant {
         require(block.timestamp >= lastDistribution + CYCLE_DURATION, "El ciclo de staking no ha terminado");
         uint256 earnings = rewardPool;
-        rewardPool = 0;
         lastDistribution = block.timestamp;
         // Lógica para distribuir las ganancias entre los holders
-        uint256 totalShares = totalSupply();
-        for (uint256 i = 0; i < totalShares; i++) {
-            address holder = address(uint160(i));
+        // uint256 totalShares = super.totalSupply();
+
+        for (uint256 i = 0; i < shareHoldersList.length; i++) {
+            address holder = shareHoldersList[i];
             uint256 holderShares = shareHolder[holder];
             if (holderShares > 0) {
                 uint256 holderEarnings = calculateRewards(holder);
-                _mint(holder, holderEarnings);
+                super.mint(holderEarnings, holder);
+                shareHolder[holder] += holderEarnings;
             }
-
-         emit EarningsDistributed(earnings);
         }
+        rewardPool = 0;
+        emit EarningsDistributed(earnings);
+       
     }
 
 
@@ -212,9 +217,13 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
         return rewardPool;
     }
 
+    function getShares(address holder) public view returns (uint256){
+        return shareHolder[holder];
+    }
+
     function getTimeUntilRedeem(address holder) public view returns (uint256){
         require(deposits[holder].length > 0, "No deposits found for user");
-        Deposit memory firstDeposit = deposit[holder][0];
+        DepositLog memory firstDeposit = deposits[holder][0];
         uint256 redeemTime = firstDeposit.timestamp + CYCLE_DURATION;
         if (block.timestamp < redeemTime){
             return redeemTime - block.timestamp;
@@ -222,6 +231,8 @@ contract DimSumVault is ERC4626, ReentrancyGuard {
             return 0;
         }
     }
+
+
 
 
 }
